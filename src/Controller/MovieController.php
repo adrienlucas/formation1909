@@ -8,6 +8,7 @@ use App\Repository\MovieRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -32,9 +33,19 @@ class MovieController extends AbstractController
     }
 
     #[Route('/movie/create', name: 'app_movie_create')]
-    public function create(): Response
+    public function create(Request $request, MovieRepository $movieRepository): Response
     {
         $form = $this->createForm(MovieType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $movie = $form->getData();
+            $movieRepository->add($movie, true);
+
+            $this->addFlash('success', 'The movie "'.$movie->getName().'" has been created.');
+
+            return $this->redirectToRoute('app_movie_list');
+        }
 
         return $this->render('movie/create.html.twig', [
             'creationForm' => $form->createView(),

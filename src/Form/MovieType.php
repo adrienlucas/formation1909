@@ -19,7 +19,9 @@ class MovieType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('description', TextareaType::class)
-            ->add('year', IntegerType::class)
+            ->add('year', IntegerType::class, [
+                'data' => date('Y')
+            ])
             ->add('genre', EntityType::class, [
                 'class' => Genre::class,
             ])

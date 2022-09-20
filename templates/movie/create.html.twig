@@ -3,5 +3,18 @@
 {% block title %}Create Movie {{ parent()}}{% endblock %}
 
 {% block body %}
-    {{ form(creationForm) }}
+{#    {{ form(creationForm) }}#}
+    {{ form_start(creationForm) }}
+
+        {{ form_row(creationForm.name) }}
+
+        {{ form_row(creationForm.description) }}
+
+        {{ form_row(creationForm.year) }}
+
+        {{ form_row(creationForm.genre) }}
+
+        <button type="submit">Créer le film</button>
+    {{ form_end(creationForm) }}
+
 {% endblock %}
