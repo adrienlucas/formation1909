@@ -46,4 +46,10 @@ class LoadMoviesController extends AbstractController
 
         return new Response('OK');
     }
+
+    // /movie/list
+    //   Affiche tout les noms de tout les movies
+
+    // /movie/{id}
+    //   Affiche le movie par son id
 }
