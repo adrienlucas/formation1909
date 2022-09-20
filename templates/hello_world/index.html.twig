@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title 'Hello HelloWorldController!' %}
+{% block title 'Hello HelloWorldController!' ~ parent() %}
 
 {% block body %}
     Hello {{ name }} !

@@ -9,12 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MovieController extends AbstractController
 {
-//    #[Route('/movie', name: 'app_movie')]
-//    public function index(): Response
-//    {
-//
-//        return new Response();
-//    }
+    #[Route('/movie', name: 'app_movie')]
+    public function list(): Response
+    {
+        return new Response();
+    }
 
     #[Route('/movie/{id}', name: 'app_movie')]
     public function show(int $id): Response
