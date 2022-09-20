@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Movie;
+use App\Form\MovieType;
 use App\Repository\MovieRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,6 +28,16 @@ class MovieController extends AbstractController
     {
         return $this->render('movie/index.html.twig', [
             'movie' => $movie
+        ]);
+    }
+
+    #[Route('/movie/create', name: 'app_movie_create')]
+    public function create(): Response
+    {
+        $form = $this->createForm(MovieType::class);
+
+        return $this->render('movie/create.html.twig', [
+            'creationForm' => $form->createView(),
         ]);
     }
 }
