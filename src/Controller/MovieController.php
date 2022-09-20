@@ -19,9 +19,6 @@ class MovieController extends AbstractController
     public function show(int $id): Response
     {
         $movies = [
-            ['name' => 'The Matrix', 'description' => 'Neo takes red pill', 'year' => 1999],
-            ['name' => 'Jurassic Park', 'description' => 'Dinosaurs, Dinosaurs everywhere', 'year' => 1993],
-            ['name' => 'Black Panther', 'description' => 'Another superhero', 'year' => 2018],
         ];
 
         if(!array_key_exists($id, $movies)) {
