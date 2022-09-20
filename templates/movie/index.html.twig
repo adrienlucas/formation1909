@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MovieController!{% endblock %}
+
+{% block body %}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Year</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ movie.name }}</td>
+            <td>{{ movie.description }}</td>
+            <td>{{ movie.year }}</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
