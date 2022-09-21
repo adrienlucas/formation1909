@@ -12,7 +12,8 @@ class HelloWorldControllerTest extends WebTestCase
         $client->request('GET', '/hello');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSame('Hello Le Monde !', $client->getResponse()->getContent());
+        $this->assertSelectorTextContains('body', 'Hello Le Monde !');
+//        $this->assertStringContainsString('Hello Le Monde !', $client->getResponse()->getContent());
     }
 
     public function testItSaysHelloToSomeone(): void
@@ -21,6 +22,6 @@ class HelloWorldControllerTest extends WebTestCase
         $client->request('GET', '/hello/Adrien');
 
         $this->assertResponseIsSuccessful();
-        $this->assertSame('Hello Adrien !', $client->getResponse()->getContent());
+        $this->assertSelectorTextContains('body', 'Hello Adrien !');
     }
 }

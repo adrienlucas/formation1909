@@ -85,6 +85,15 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "phpunit": [
+            "@database-reset",
+            "bin/phpunit"
+        ],
+        "database-reset": [
+            "rm -rf ./var/data.db",
+            "bin/console doctrine:database:create",
+            "bin/console doctrine:schema:create"
         ]
     },
     "conflict": {
