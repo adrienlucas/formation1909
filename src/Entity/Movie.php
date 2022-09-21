@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\MovieRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 class Movie
@@ -14,12 +16,16 @@ class Movie
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotNull]
+    #[Assert\Length(min: 3)]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[Assert\Length(max: 1024)]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Assert\NotNull]
     #[ORM\Column]
     private ?int $year = null;
 

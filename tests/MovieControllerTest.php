@@ -2,54 +2,34 @@
 
 namespace App\Tests;
 
-use App\Entity\Genre;
-use App\Entity\Movie;
-use App\Repository\GenreRepository;
-use App\Repository\MovieRepository;
+use App\DataFixtures\MovieFixtures;
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class MovieControllerTest extends WebTestCase
 {
+    /**
+     * @throws Exception
+     */
     public function setup(): void
     {
-        $kernel = self::bootKernel();
+        self::bootKernel();
 
+        /** @var EntityManagerInterface $entityManager */
         $entityManager = self::getContainer()->get(EntityManagerInterface::class);
 
-        $genreRepository = $entityManager->getRepository(Genre::class);
-        $movieRepository = $entityManager->getRepository(Movie::class);
-//        $genreRepository = $kernel->getContainer()->get(GenreRepository::class);
-//        $movieRepository = $kernel->getContainer()->get(MovieRepository::class);
+        $purger = new ORMPurger($entityManager);
+        $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
 
-        $genreAction = new Genre();
-        $genreAction->setName('Action');
-        $genreRepository->add($genreAction);
+        $fixtureExecutor = new ORMExecutor(
+            $entityManager,
+            $purger
+        );
 
-        $genreSuperHeroes = new Genre();
-        $genreSuperHeroes->setName('Super Heroes');
-        $genreRepository->add($genreSuperHeroes);
-
-        $movie = new Movie();
-        $movie->setName('The Matrix');
-        $movie->setDescription('Neo takes red pill');
-        $movie->setYear(1999);
-        $movie->setGenre($genreAction);
-        $movieRepository->add($movie);
-
-        $movie = new Movie();
-        $movie->setName('Jurassic Park');
-        $movie->setDescription('Dinosaurs, Dinosaurs everywhere');
-        $movie->setYear(1993);
-        $movie->setGenre($genreAction);
-        $movieRepository->add($movie);
-
-        $movie = new Movie();
-        $movie->setName('Black Panther');
-        $movie->setDescription('Another superhero');
-        $movie->setYear(2018);
-        $movie->setGenre($genreSuperHeroes);
-        $movieRepository->add($movie, true);
+        $fixtureExecutor->execute([new MovieFixtures()]);
 
         self::ensureKernelShutdown();
     }

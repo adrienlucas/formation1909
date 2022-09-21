@@ -16,10 +16,22 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MovieRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, GenreRepository $genreRepository)
     {
+        $this->genreRepository = $genreRepository;
         parent::__construct($registry, Movie::class);
     }
+
+    public function setGenreRepository(GenreRepository $genreRepository)
+    {
+        if($this->genreRepository !== null) {
+            return;
+        }
+
+        $this->genreRepository = $genreRepository;
+    }
+
+
 
     public function add(Movie $entity, bool $flush = false): void
     {
