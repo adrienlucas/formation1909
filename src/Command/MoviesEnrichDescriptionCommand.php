@@ -2,6 +2,9 @@
 
 namespace App\Command;
 
+use App\Repository\MovieRepository;
+use App\Service\OmdbGateway;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,6 +19,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class MoviesEnrichDescriptionCommand extends Command
 {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private MovieRepository $movieRepository,
+        private OmdbGateway $omdbGateway,
+    )
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
 //        $this
@@ -28,7 +40,20 @@ class MoviesEnrichDescriptionCommand extends Command
     {
 
         $io = new SymfonyStyle($input, $output);
-        $io->table();
+
+        $emptyDescriptionMovies = $this->movieRepository->findEmptyDescriptions();
+
+        $io->progressStart(count($emptyDescriptionMovies));
+
+        foreach($emptyDescriptionMovies as $emptyDescriptionMovie) {
+            $description = $this->omdbGateway->getDescriptionByMovie($emptyDescriptionMovie);
+            $emptyDescriptionMovie->setDescription($description);
+            $io->progressAdvance();
+        }
+
+        $this->entityManager->flush();
+        $io->progressFinish();
+
 //        $arg1 = $input->getArgument('arg1');
 //
 //        if ($arg1) {

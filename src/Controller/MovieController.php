@@ -6,10 +6,12 @@ use App\Entity\Movie;
 use App\Form\MovieType;
 use App\Repository\MovieRepository;
 use App\Service\OmdbGateway;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class MovieController extends AbstractController
 {
@@ -18,9 +20,15 @@ class MovieController extends AbstractController
     ) {}
 
     #[Route('/movie/list', name: 'app_movie_list')]
-    public function list(MovieRepository $movieRepository): Response
+    public function list(Request $request, MovieRepository $movieRepository): Response
     {
-        $movies = $movieRepository->findAll();
+        $limit = $request->query->get('limit', 20);
+
+        if($limit > 100) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        }
+
+        $movies = $movieRepository->findAll($limit);
 
         return $this->render('movie/list.html.twig', [
             'movies' => $movies
@@ -39,13 +47,18 @@ class MovieController extends AbstractController
     }
 
     #[Route('/movie/create', name: 'app_movie_create')]
+    #[IsGranted('ROLE_USER')]
     public function create(Request $request, MovieRepository $movieRepository): Response
     {
         $form = $this->createForm(MovieType::class);
+
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+            /** @var Movie $movie */
             $movie = $form->getData();
+            $movie->setCreatedBy($this->getUser());
+
             $movieRepository->add($movie, true);
 
             $this->addFlash('success', 'The movie "'.$movie->getName().'" has been created.');
@@ -56,5 +69,13 @@ class MovieController extends AbstractController
         return $this->render('movie/create.html.twig', [
             'creationForm' => $form->createView(),
         ]);
+    }
+
+    #[Route('/movie/delete/{id}', name: "app_movie_delete")]
+    public function deleteMovie(Movie $movie, MovieRepository $movieRepository): Response
+    {
+        $movieRepository->remove($movie, true);
+
+        return $this->redirectToRoute('app_movie_list');
     }
 }

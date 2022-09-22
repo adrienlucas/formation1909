@@ -9,6 +9,7 @@
         <th scope="col">Name</th>
         <th scope="col">Description</th>
         <th scope="col">Year</th>
+        <th scope="col">Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -21,6 +22,11 @@
             </td>
             <td>{{ movie.description }}</td>
             <td>{{ movie.year }}</td>
+            <td>
+                <a href="{{ path('app_movie_delete', {'id': movie.id}) }}">Year
+                    Delete
+                </a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

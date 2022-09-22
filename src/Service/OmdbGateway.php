@@ -24,4 +24,17 @@ class OmdbGateway
 
         return array_key_exists('Poster', $movieData) ? $movieData['Poster'] : null;
     }
+
+    public function getDescriptionByMovie(Movie $movie): ?string
+    {
+        $response = $this->httpClient->request('GET', sprintf(
+            'https://www.omdbapi.com/?apikey=%s&t=%s',
+            'e0ded5e2',
+            $movie->getName()
+        ));
+
+        $movieData = $response->toArray();
+
+        return array_key_exists('Plot', $movieData) ? $movieData['Plot'] : null;
+    }
 }
