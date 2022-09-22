@@ -30,13 +30,13 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
         $manager->persist($adrien);
 
-        $johndoe = new User();
-        $johndoe->setUsername('john');
-        $johndoe->setPassword(
-            $this->passwordHasher->hashPassword($johndoe, 'john')
+        $john = new User();
+        $john->setUsername('john');
+        $john->setPassword(
+            $this->passwordHasher->hashPassword($john, 'john')
         );
 
-        $manager->persist($johndoe);
+        $manager->persist($john);
 
         $manager->flush();
     }

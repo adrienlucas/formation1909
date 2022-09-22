@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Movie;
+use App\Event\NewMovieCreatedEvent;
 use App\Form\MovieType;
 use App\Repository\MovieRepository;
 use App\Service\OmdbGateway;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,6 +17,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class MovieController extends AbstractController
 {
+    private EventDispatcherInterface $eventDispatcher;
+
     public function __construct(
         private OmdbGateway $omdbGateway,
     ) {}
@@ -61,17 +65,18 @@ class MovieController extends AbstractController
 
             $movieRepository->add($movie, true);
 
+            $this->eventDispatcher->dispatch(new NewMovieCreatedEvent($movie));
+
             $this->addFlash('success', 'The movie "'.$movie->getName().'" has been created.');
 
             return $this->redirectToRoute('app_movie_list');
         }
 
-        return $this->render('movie/create.html.twig', [
-            'creationForm' => $form->createView(),
-        ]);
+        return $this->render('movie/create.html.twig', );
     }
 
     #[Route('/movie/delete/{id}', name: "app_movie_delete")]
+    #[IsGranted('can_delete', 'movie')]
     public function deleteMovie(Movie $movie, MovieRepository $movieRepository): Response
     {
         $movieRepository->remove($movie, true);
